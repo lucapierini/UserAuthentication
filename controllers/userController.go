@@ -13,6 +13,10 @@ import(
 	helpers "github.com/lucapierini/UserAuthentication/helpers"
 	"golang.org/x/crypto/bcrypt"
 	
+	var userCollection *mongo.Collection = database.OpenCollection(database.Client, "users")
+
+	var validate = validator.New()
+
 	func HashPassword(password string) string {
 		bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 		if err != nil {

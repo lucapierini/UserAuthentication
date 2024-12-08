@@ -13,26 +13,31 @@ import (
 )
 
 func DBinstance() *mongo.Client {
+	// Cargar las variables de entorno
 	err := godotenv.Load(".env")
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
 
+	// Leer la URL de conexión desde el archivo .env
 	MongoDb := os.Getenv("MONGODB_URL")
 
-	client, err := mongo.NewClient(options.Client().ApplyURI(MongoDb))
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
+	// Crear un contexto con tiempo límite para la conexión
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	err = client.Connect(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println("Connected to MongoDB!")
 
+	// Crear y conectar el cliente MongoDB en un solo paso
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(MongoDb))
+	if err != nil {
+		log.Fatal("Error connecting to MongoDB:", err)
+	}
+
+	// Verificar la conexión
+	err = client.Ping(ctx, nil)
+	if err != nil {
+		log.Fatal("Error pinging MongoDB:", err)
+	}
+
+	fmt.Println("Connected to MongoDB!")
 	return client
 }

@@ -6,9 +6,11 @@ import (
 	"log"
 	"os"
 	"time"
-	"github.com/lucapierini/UserAuthentication/database"
+
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/lucapierini/UserAuthentication/database"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/bson/primitives"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -61,4 +63,33 @@ func GenerateAllTokens(email string, firstName string, lastName string, uid stri
 	}
 
 	return token, refreshToken, err
+}
+
+func UpdateAllTokens(singedToken string, signedRefreshToken string, userId string) {
+	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+
+	var updateObj primitive.D
+
+	updateObj = append(updateObj, bson.E{"token", singedToken})
+	updateObj = append(updateObj, bson.E{"refresh_token", signedRefreshToken})
+
+	Update_at, _ := time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+	updateObj = append(updateObj, bson.E{"updated_at", Update_at})
+
+	upsert := true
+	filter := bson.M{"user_id": userId}
+	opt := options.UpdateOptions{
+		Upsert: &upsert,
+	}
+
+	_, err := userCollection.UpdateOne(ctx, filter, bson.D{
+		{"$set", updateObj},
+	},
+	&opt,
+)
+	defer cancel()
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }

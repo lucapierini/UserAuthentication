@@ -68,14 +68,15 @@ import(
 		c.JSON(http.StatusOK, gin.H{"data": foundUser})
 	}
 
-	func GetUser(c *gin.Context) {
-		id := c.Param("id")
-		var user models.User
-		helpers.DB.Where("id = ?", id).First(&user)
-		if user.ID == 0 {
-			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+	func GetUser() gin.HandlerFunc {
+		return func(c *gin.Context) {
+			userId := c.Param("user_id")
+
+			if err := helpers.MatchUserTypeToUid(c, userId); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
 			}
-			c.JSON(http.StatusOK, gin.H{"data": user})
+		}
 	}
 
 	func GetUsers(c *gin.Context) {

@@ -1,13 +1,13 @@
 package routes
 
 import (
-	controller "github.com/lucapierini/UserAutentication/controllers"
+	controller "github.com/lucapierini/UserAuthentication/controllers"
 	"github.com/gin-gonic/gin"
-	"github.com/lucapierini/UserAutentication/middleware"
+	"github.com/lucapierini/UserAuthentication/middleware"
 )
 
-func UserRoutes(incomingRoutes *gin.Engine) {
-	incomingRoutes.Use(middleware.Authenticate())
+func UserRouters(incomingRoutes *gin.Engine) {
+	incomingRoutes.Use(middleware.AuthMiddleware())
 	incomingRoutes.GET("/users", controller.GetUsers())
 	incomingRoutes.GET("/users/:user_id", controller.GetUser())
 }

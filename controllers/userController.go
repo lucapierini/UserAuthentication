@@ -12,9 +12,10 @@ import(
 	"github.com/lucapierini/UserAuthentication/models"
 	helpers "github.com/lucapierini/UserAuthentication/helpers"
 	"golang.org/x/crypto/bcrypt"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/primitive"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"github.com/lucapierini/UserAuthentication/database"
 )
 	
@@ -23,7 +24,7 @@ import(
 	var validate = validator.New()
 
 	func HashPassword(password string) string {
-		bcrypt.GenerateFromPassword([]byte(password), 14)
+		bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 		if err != nil {
 			log.Panic(err)
 		}
@@ -80,11 +81,11 @@ import(
 				return
 			}
 			
-			user.Created_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
-			user.Updated_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+			user.CreatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+			user.UpdatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 			user.ID = primitive.NewObjectID()
-			user.User_id = user.ID.Hex()
-			token, refreshToken, _ := helpers.GenerateAllTokens(user.Email, *user.First_name, *user.Last_name, *user.User_type, *user.User_id)
+			user.UserId = user.ID.Hex()
+			token, refreshToken, _ := helpers.GenerateAllTokens(*user.Email, *user.FirstName, *user.LastName, *user.UserType, *&user.UserId)
 			user.Token = &token
 			user.RefreshToken = &refreshToken
 			
@@ -127,8 +128,8 @@ import(
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "user not found"})
 				return
 			}
-			token, refreshToken, _ := helpers.GenerateAllTokens(*foundUser.Email, *foundUser.First_name, *foundUser.Last_name, *foundUser.User_type, *foundUser.User_id)
-			helpers.UpdateAllTokens(token, refreshToken, foundUser.User_id)
+			token, refreshToken, _ := helpers.GenerateAllTokens(*foundUser.Email, *foundUser.FirstName, *foundUser.LastName, *foundUser.UserType, *&foundUser.UserId)
+			helpers.UpdateAllTokens(token, refreshToken, foundUser.UserId)
 			userCollection.FindOne(ctx,bson.M{"token": token}).Decode(&foundUser)
 
 			if err != nil {

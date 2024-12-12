@@ -1,22 +1,25 @@
-version: '3.8'
+version: "3.8"
 
 services:
-  app:
-    build: .
+  api:
+    build:
+      context: .
+    container_name: api-container
     ports:
-      - "9000:9000"
+      - "9000:9000" # Mapea el puerto 9000 del contenedor al host
     environment:
       - PORT=9000
-      - MONGODB_URL=mongodb://mongo:27017/go-auth
+      - MONGODB_URL=mongodb://mongo:27017/go-auth # Dirección de Mongo dentro de la red de Docker
     depends_on:
-      - mongo
+      - mongo # Espera a que Mongo esté listo antes de levantar la API
 
   mongo:
     image: mongo:latest
+    container_name: mongo-container
     ports:
-      - "27017:27017"
+      - "27017:27017" # Mapea el puerto 27017 del contenedor al host
     volumes:
-      - mongo-data:/data/db
+      - mongo-data:/data/db # Crea un volumen para persistencia de datos
 
 volumes:
   mongo-data:

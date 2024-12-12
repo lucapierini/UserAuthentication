@@ -4,20 +4,20 @@ import (
 	"fmt"
 	"net/http"
 
+	helper "github.com/lucapierini/UserAuthentication/helpers"
 	"github.com/gin-gonic/gin"
-	helpers "github.com/lucapierini/UserAuthentication/helpers"
 )
 
-func AuthMiddleware() gin.HandlerFunc {
+func Authenticate() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		clientToken := c.Request.Header.Get("token")
 		if clientToken == "" {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprint("No token provided")})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprint("No authorization header provided")})
 			c.Abort()
 			return
 		}
 
-		claims, err := helpers.ValidateToken(clientToken)
+		claims, err := helper.ValidateToken(clientToken)
 
 		if err != "" {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err})

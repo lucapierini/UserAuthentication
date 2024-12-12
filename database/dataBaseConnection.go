@@ -22,21 +22,34 @@ func DBinstance() *mongo.Client {
 	// Leer la URL de conexión desde el archivo .env
 	MongoDb := os.Getenv("MONGODB_URL")
 
-	// Crear un contexto con tiempo límite para la conexión
+	client, err := mongo.NewClient(options.Client().ApplyURI(MongoDb))
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	// Crear y conectar el cliente MongoDB en un solo paso
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(MongoDb))
+	err = client.Connect(ctx)
 	if err != nil {
-		log.Fatal("Error connecting to MongoDB:", err)
+		log.Fatal(err)
 	}
 
-	// Verificar la conexión
-	err = client.Ping(ctx, nil)
-	if err != nil {
-		log.Fatal("Error pinging MongoDB:", err)
-	}
+	// // Crear un contexto con tiempo límite para la conexión
+	// ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	// defer cancel()
+
+	// // Crear y conectar el cliente MongoDB en un solo paso
+	// client, err := mongo.Connect(ctx, options.Client().ApplyURI(MongoDb))
+	// if err != nil {
+	// 	log.Fatal("Error connecting to MongoDB:", err)
+	// }
+
+	// // Verificar la conexión
+	// err = client.Ping(ctx, nil)
+	// if err != nil {
+	// 	log.Fatal("Error pinging MongoDB:", err)
+	// }
 
 	fmt.Println("Connected to MongoDB!")
 	return client
@@ -45,6 +58,8 @@ func DBinstance() *mongo.Client {
 var Client *mongo.Client = DBinstance()
 
 func OpenCollection(client *mongo.Client, collectionName string) *mongo.Collection {
-	var collection *mongo.Collection = client.Database("").Collection(collectionName)
+	var collection *mongo.Collection = client.Database("cluster0").Collection(collectionName)
 	return collection
 }
+
+// Posible error point 1

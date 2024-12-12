@@ -7,9 +7,11 @@ import (
 )
 
 func AuthRouters(incomingRoutes *gin.Engine) {
-	auth := incomingRoutes.Group("/users")
-	{
-		auth.POST("/signup", controller.Signup())
-		auth.POST("/login", controller.Login())
-	}
+	// auth := incomingRoutes.Group("/users")
+	// {
+	// 	auth.POST("/signup", controller.Signup())
+	// 	auth.POST("/login", controller.Login())
+	// }
+	incomingRoutes.POST("users/signup", controller.Signup())
+	incomingRoutes.POST("users/login", controller.Login())
 }

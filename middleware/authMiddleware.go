@@ -3,7 +3,6 @@ package middleware
 import (
 	"fmt"
 	"net/http"
-
 	helper "github.com/lucapierini/UserAuthentication/helpers"
 	"github.com/gin-gonic/gin"
 )

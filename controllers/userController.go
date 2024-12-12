@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"strconv"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -166,31 +166,17 @@ func GetUsers() gin.HandlerFunc {
 
 		matchStage := bson.D{{"$match", bson.D{{}}}}
 
-		// groupStage := bson.D{
-		// 	{"$group", bson.D{
-		// 		{Key: "_id", Value: bson.D{{Key: "_id", Value: "null"}}},
-		// 		{Key: "total_count", Value: bson.D{{Key: "$sum", Value: 1}}},
-		// 		{Key: "data", Value: bson.D{{Key: "$push", Value: "$$ROOT"}}},
-		// 	}},
-		// }
 		groupStage := bson.D{{"$group", bson.D{
-			{"_id",bson.D{{"_id","null"}}},
-			{"total_count", bson.D{{"$sum",1}}},
-			{"data", bson.D{{"$push","$$ROOT"}}}}}}
+			{"_id", bson.D{{"_id", "null"}}},
+			{"total_count", bson.D{{"$sum", 1}}},
+			{"data", bson.D{{"$push", "$$ROOT"}}}}}}
 
-		// projectStage := bson.D{
-		// 	{Key: "$project", Value: bson.D{
-		// 		{Key: "_id", Value: 0},
-		// 		{Key: "total_count", Value: 1},
-		// 		{Key: "user_item", Value: bson.D{{Key: "$slice", Value: []interface{}{"$data", startIndex, recordPerPage}}}},
-		// 	}},
-		// }
 		projectStage := bson.D{
 			{"$project", bson.D{
-				{"_id",0},
-				{"total_count",1},
-				{"user_item",bson.D{
-					{"$slice",[]interface{}{"$data",startIndex,recordPerPage}}}},}}}
+				{"_id", 0},
+				{"total_count", 1},
+				{"user_item", bson.D{
+					{"$slice", []interface{}{"$data", startIndex, recordPerPage}}}}}}}
 
 		result, err := userCollection.Aggregate(ctx, mongo.Pipeline{matchStage, groupStage, projectStage})
 		defer cancel()
@@ -202,8 +188,9 @@ func GetUsers() gin.HandlerFunc {
 			log.Fatal(err)
 
 		}
-		c.JSON(http.StatusOK, allUsers[0])}}
-
+		c.JSON(http.StatusOK, allUsers[0])
+	}
+}
 
 func GetUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -227,4 +214,3 @@ func GetUser() gin.HandlerFunc {
 		c.JSON(http.StatusOK, user)
 	}
 }
-

@@ -8,12 +8,9 @@ import (
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	// jwt "github.com/golang-jwt/jwt/v4"
 	"github.com/lucapierini/UserAuthentication/database"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-
-	// "go.mongodb.org/mongo-driver/bson/primitives"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )

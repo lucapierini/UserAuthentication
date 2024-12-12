@@ -7,8 +7,6 @@ import (
 	routes "github.com/lucapierini/UserAuthentication/routes"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-
-	// controllers "github.com/lucapierini/UserAuthentication/controllers"
 )
 
 func main() {
@@ -20,7 +18,6 @@ func main() {
 
 	if port == "" {
 		port = "8000"
-		// port = "9000"
 	}
 
 	router := gin.New()
@@ -28,8 +25,6 @@ func main() {
 
 	routes.AuthRouters(router)
 	routes.UserRouters(router)
-	// router.POST("/signup", controllers.Signup())
-	// router.POST("/login", controllers.Login())
 
 	router.GET("/api-1", func(c *gin.Context) {
 		c.JSON(200, gin.H{

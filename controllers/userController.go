@@ -53,7 +53,7 @@ import(
 				return
 			}
 			
-			validationErr := validate. Struct(user)
+			validationErr := validate.Struct(user)
 			if validationErr != nil {
 				c.JSON(http.StatusBadRequest, gin.H{"error": validationErr.Error()})
 				return

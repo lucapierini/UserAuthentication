@@ -9,7 +9,8 @@ import (
 func main(){
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080"
+		// port = "8080"
+		port = "9000"
 		}
 	
 	router := gin.New()
@@ -20,13 +21,13 @@ func main(){
 	
 	router.GET("/api-1", func(c *gin.Context) {
 		c.JSON(200, gin.H{
-			"message": "Welcome to User Authentication API",
+			"message": "Welcome to User Authentication API 1",
 		})
 	})
 
 	router.GET("/api-2", func(c *gin.Context) {
 		c.JSON(200, gin.H{
-			"message": "Welcome to User Authentication API",
+			"message": "Welcome to User Authentication API 2",
 		})
 	})
 
